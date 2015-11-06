@@ -1,0 +1,21 @@
+/_build
+/deps
+erl_crash.dump
+*.ez
+.DS_Store
+.redcar
+iron.json
+log/*.log
+npm-debug.log
+/tmp/
+
+# Vim
+*.swp
+*.swp
+.*.swp
+.*.swo
+
+/node_modules/
+vendor/assets/bower_components/
+
+.temp/

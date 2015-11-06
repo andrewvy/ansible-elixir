@@ -1,0 +1,12 @@
+---
+- when: action == "setup"
+  include: action-setup.yml
+
+- when: action == "start"
+  include: action-start.yml
+
+- when: action == "build"
+  include: action-build.yml
+
+- when: action == "upgrade"
+  include: action-upgrade.yml
