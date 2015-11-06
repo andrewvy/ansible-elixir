@@ -2,6 +2,12 @@
 
 Simple deployment role for Exrm-based releases
 
+# Installation
+
+`ansible-galaxy install andrewvy.elixir`
+
+Or manually, by cloning the repo. :)
+
 # Setup
 
 First, you need to make sure what your host layout looks like.
