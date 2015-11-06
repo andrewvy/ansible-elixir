@@ -1,0 +1,15 @@
+---
+
+- include: deploy.yml
+
+# ------
+# ACTION == "START"
+# ------
+
+- name: "extract release tar to hosts"
+  unarchive:
+    src: "~/releases/{{ app_name }}.tar.gz"
+    dest: "~/apps/{{ app_name }}/"
+
+- name: "run app"
+  command: bash -lc "PORT={{ app_port }} ~/apps/{{ app_name }}/bin/{{ app_name }} restart"

@@ -1,0 +1,69 @@
+---
+- name: "clean old repo"
+  file: path="{{ project_path }}" state=absent
+
+- name: "ensure repo projects directory"
+  file: path="~/projects" state=directory
+
+- name: "fetch repo"
+  git:
+    repo: "{{ repo_url }}"
+    version: "{{ git_ref }}"
+    accept_hostkey: yes
+    force: True
+    dest: "{{ project_path }}"
+    ssh_opts: "-o ForwardAgent=yes"
+
+- name: "install repo dependencies"
+  command: bash -lc "mix deps.get" chdir="{{ project_path }}"
+  environment:
+    MIX_ENV: "{{ mix_env }}"
+
+- name: "compile repo dependencies"
+  command: bash -lc "mix deps.compile" chdir="{{ project_path }}"
+  environment:
+    MIX_ENV: "{{ mix_env }}"
+
+- name: "get release version"
+  command: bash -lc "mix run -e 'IO.puts \"RELEASE_VERSION=\" <> Mix.Project.config[:version]' | grep RELEASE_VERSION | sed 's/RELEASE_VERSION=//'" chdir="{{ project_path }}"
+  register: app_version_result
+- set_fact: app_version="{{ app_version_result.stdout }}"
+
+- name: "build release"
+  command: bash -lc 'SERVER=1 mix release' chdir="{{ project_path }}"
+  environment:
+    MIX_ENV: "{{ mix_env }}"
+    PORT: "{{ app_port }}"
+
+- name: "add and commit the release"
+  command: git add -A chdir="{{ project_path }}"
+- command: git commit -m "compiled release {{ app_version }}" chdir="{{ project_path }}"
+  ignore_errors: yes
+- shell: git tag -a {{ app_version }} -m 'Build Server' chdir="{{ project_path }}"
+  ignore_errors: yes
+
+- name: "push release to origin"
+  command: git push origin "{{ git_ref }}" --tags chdir="{{ project_path }}"
+  ignore_errors: yes
+
+- name: "fetch release tar to local"
+  fetch:
+    src: "{{ project_path }}/rel/{{ app_name }}/releases/{{ app_version }}/{{ app_name }}.tar.gz"
+    dest: "~/releases/"
+    flat: yes
+
+- name: "create app name version file"
+  file:
+    path: "{{ project_path }}/{{ app_name }}_version"
+    state: touch
+
+- name: "update app name version file"
+  lineinfile:
+    dest: "{{ project_path }}/{{ app_name }}_version"
+    line: "{{ app_version }}"
+
+- name: "fetch app name version file to local"
+  fetch:
+    src: "{{ project_path }}/{{ app_name }}_version"
+    dest: "~/releases/"
+    flat: yes

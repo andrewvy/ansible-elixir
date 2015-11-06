@@ -1,0 +1,8 @@
+---
+git_ref: "master"
+projects_dir: "/tmp/projects"
+project_path: "{{ projects_dir }}/{{ app_name }}"
+
+deploy_type: "restart"
+mix_env: "prod"
+app_port: 3000

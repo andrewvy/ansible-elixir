@@ -10,9 +10,27 @@ I'm running this role with a dedicated build server that separates the compile p
 
 **You must make sure that the server that does the compiling has git access to your repo.**
 
+This is because the compiled server will commit and tag the released version to your repo.
+
 You can achieve this either through SSH Agent Forwarding, or by registering your build server's SSH keys with GitHub.
 
-Next, you can create your playbook. Here's my example:
+Next, you need to make sure that your compile server has erlang and elixir installed. This role doesn't handle those dependencies, I highly recommend using [ohr486.elixir](https://github.com/ohr486/ansible-elixir)
+
+However, the `setup` action will install Hex and Rebar for you. Which ohr486 does not do.
+
+*setup-playbook.yml*
+
+```
+---
+- hosts: build_servers
+  sudo: yes
+  roles:
+    - { role: ohr486.elixir, erlang_version: 18.1, elixir_version: v1.1.1 }
+    - { role: "andrewvy.elixir", action: "setup" }
+```
+
+
+Next, you can create your deploy playbook. Here's my example:
 
 
 ```
@@ -30,7 +48,7 @@ Next, you can create your playbook. Here's my example:
   vars:
     app_name: CHANGEME
   roles:
-    - { role: "andrewvy.elixir", action: "upgrade" }
+    - { role: "andrewvy.elixir", action: "start" }
 ```
 
 But, you can easily do compiling + deploying on the same server.
@@ -44,10 +62,12 @@ But, you can easily do compiling + deploying on the same server.
     app_name: CHANGEME
   roles:
     - { role: "andrewvy.elixir", action: "build" }
-    - { role: "andrewvy.elixir", action: "upgrade" }
+    - { role: "andrewvy.elixir", action: "start" }
 ```
 
 **You must define** a `repo_url` and `app_name`. And you **must** define the build role first.
+
+After you have first successfully deployed with the `action: start`, you can then swap it out for `upgrade` for hot-code upgrades. :)
 
 
 Actions:

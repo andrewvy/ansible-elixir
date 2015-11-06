@@ -1,0 +1,24 @@
+---
+
+# This lookup is required, because looking up the app version
+# is done at the build role and needs to transfer over
+# to the deploy role.
+
+- name: "ensure releases dir"
+  file: path="~/releases" state=directory
+
+- name: "ensure apps dir"
+  file: path="~/apps" state=directory
+
+- name: "ensure app name dir"
+  file: path="~/apps/{{ app_name }}" state=directory
+
+- name: "copy app version"
+  copy:
+    src: "~/releases/{{ app_name }}_version"
+    dest: "~/apps/{{ app_name }}/"
+
+- name: "get saved version"
+  command: bash -lc "cat ~/apps/{{ app_name }}/{{ app_name }}_version"
+  register: app_version_result
+- set_fact: app_version="{{ app_version_result.stdout }}"
