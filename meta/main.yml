@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  author: Andrew Vy
+  description: Simple role for deploying Elixir exrm-based releases
+  license: MIT
+  min_ansible_version: 1.4
+  platforms:
+  - name: EL
+    versions:
+    - 6
+    - 7
+  - name: Fedora
+    versions:
+    - 20
+    - 21
+    - 22
+  - name: Amazon
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - trusty
+    - utopic
+    - vivid
+    - wily
+  categories:
+  - development
+dependencies: []
