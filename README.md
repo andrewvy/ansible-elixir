@@ -8,6 +8,34 @@ Simple deployment role for Exrm-based releases
 
 Or manually, by cloning the repo. :)
 
+Make sure you have `exrm` listed in your *mix.exs* dependencies!
+
+```
+  defp deps do
+    [{:phoenix, "~> 1.0.0"},
+     {:phoenix_html, "~> 2.1"},
+     {:phoenix_live_reload, "~> 1.0", only: :dev},
+     {:phoenix_ecto, "~> 1.1"},
+     {:postgrex, ">= 0.0.0"},
+     {:cowboy, "~> 1.0"},
+     {:exrm, "~> 0.19.9"}
+   ]
+```
+
+Also, you may run into [Common Issues with Exrm](https://hexdocs.pm/exrm/extra-common-issues.html)
+
+In my case, I had to add to my *mix.exs* applications..
+
+`:postgrex, :phoenix_ecto`
+
+```
+  def application do
+    [mod: {Chat, []},
+     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :postgrex, :phoenix_ecto]]
+  end
+```
+
+
 # Setup
 
 First, you need to make sure what your host layout looks like.
