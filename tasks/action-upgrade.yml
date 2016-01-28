@@ -20,5 +20,5 @@
 
 - when: action == "upgrade"
   name: "run app"
-  command: bash -lc "PORT=3000 ~/apps/{{ app_name }}/bin/{{ app_name }} upgrade {{ app_version }}"
+  command: bash -lc "PORT={{ app_port }} ~/apps/{{ app_name }}/bin/{{ app_name }} upgrade {{ app_version }}"
 
